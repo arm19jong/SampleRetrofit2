@@ -4,6 +4,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.jongzazaal.sampleretrofit2.model.Dep;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import retrofit2.Call;
@@ -14,10 +16,13 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
+
+import static com.example.jongzazaal.sampleretrofit2.MainActivity.TAG;
 
 /**
  * Created by jongzazaal on 6/2/2017.
@@ -94,6 +99,85 @@ public class Presenter implements Connext.Presenter {
     @Override
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    @Override
+    public Observable<JsonObject> getRetrofitByRxCustomCreate() {
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+//        JsonObject service = retrofit.create(MyService.class);
+//        Observable<JsonObject> des = Observable.create(new Observable.OnSubscribe<JsonObject>() {
+//            @Override
+//            public void call(Subscriber<? super JsonObject> subscriber) {
+//                JsonArray jsonArray = retrofit.create(MyService.class).listRepos3();
+//                Log.d("TAG", "call: ");
+//                for(int i=0; i<jsonArray.size(); i++){
+//                    subscriber.onNext(jsonArray.get(i).getAsJsonObject());
+//                }
+//                subscriber.onCompleted();
+//            }
+//        });
+        Observable<JsonObject> observable = Observable.create(new Observable.OnSubscribe<JsonObject>() {
+            @Override
+            public void call(final Subscriber<? super JsonObject> subscriber) {
+//                    List<PostDetail> postDetailList = getPostDetailFromServer();
+                    MyService myService = retrofit.create(MyService.class);
+                    Call<JsonArray> observable  = myService.listRepos3();
+                    observable.enqueue(new Callback<JsonArray>() {
+                        @Override
+                        public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
+
+                            for (int i=0; i<response.body().size(); i++){
+                                subscriber.onNext(response.body().get(i).getAsJsonObject());
+                            }
+                            subscriber.onCompleted();
+                        }
+
+                        @Override
+                        public void onFailure(Call<JsonArray> call, Throwable t) {
+                            subscriber.onError(t);
+                        }
+                    });
+                    Log.d(TAG, "call: ");
+
+//                    for(int i=0; i<5; i++) {
+//                        JsonObject j = new JsonObject();
+//                        j.addProperty("a",  i);
+//                        subscriber.onNext(j);
+//                    }
+
+//                    for(int i=0; i<5; i++) {
+//                        JsonObject j = new JsonObject();
+//                        j.addProperty("a",  i);
+//                        subscriber.onNext(j);
+//                    }
+//                    subscriber.onCompleted();
+
+
+        }});
+        return observable;
+//        Subscription subscription = observable.subscribe(new Observer<JsonObject>() {
+//            @Override
+//            public void onCompleted() {
+//                Log.d("TAG", "onCompleted: ");
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                Log.d("TAG", "onError: "+e.getMessage());
+////                Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onNext(JsonObject jsonObject) {
+////                Toast.makeText(MainActivity.this, jsonObject.toString(), Toast.LENGTH_SHORT).show();
+//
+//                Log.d("TAG", "onNext: "+jsonObject.toString());
+//            }
+//        });
     }
 
     @Override

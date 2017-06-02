@@ -33,21 +33,38 @@ public class MainActivity extends AppCompatActivity {
 //        presenter.getRetrofit();
 
 //        presenter.getRetrofitByRx();
-        presenter.zipRx().subscribe(new Observer<Dep>() {
+//        presenter.zipRx().subscribe(new Observer<Dep>() {
+//            @Override
+//            public void onCompleted() {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//            }
+//
+//            @Override
+//            public void onNext(Dep dep) {
+//                Log.d("TAG", "onNext: "+dep.getDes().toString()+"//"+dep.getDes2().toString());
+//                Toast.makeText(MainActivity.this, dep.getDes().toString()+"//"+dep.getDes2().toString(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+        presenter.getRetrofitByRxCustomCreate().subscribe(new Observer<JsonObject>() {
             @Override
             public void onCompleted() {
-
+                Log.d(TAG, "onCompleted: ");
             }
 
             @Override
             public void onError(Throwable e) {
-
+                Log.d(TAG, "onError: ");
             }
 
             @Override
-            public void onNext(Dep dep) {
-                Log.d("TAG", "onNext: "+dep.getDes().toString()+"//"+dep.getDes2().toString());
-                Toast.makeText(MainActivity.this, dep.getDes().toString()+"//"+dep.getDes2().toString(), Toast.LENGTH_SHORT).show();
+            public void onNext(JsonObject jsonObject) {
+                Log.d(TAG, "onNext: "+jsonObject.toString());
             }
         });
 

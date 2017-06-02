@@ -28,7 +28,7 @@ public interface MyService {
     @GET("departments/{user}")
     Call<Dep> listRepos2(@Path("user") String user);
 
-    @GET("departments")
+    @GET("des")
     Call<JsonArray> listRepos3();
 
     @GET("des/{id}")

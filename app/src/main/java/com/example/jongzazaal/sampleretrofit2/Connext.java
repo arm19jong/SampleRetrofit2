@@ -1,6 +1,8 @@
 package com.example.jongzazaal.sampleretrofit2;
 
 import com.example.jongzazaal.sampleretrofit2.model.Dep;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import rx.Observable;
 
@@ -13,6 +15,7 @@ public interface Connext {
         void getRetrofit();
         void getRetrofitByRx();
         void setBaseUrl(String baseUrl);
+        Observable<JsonObject> getRetrofitByRxCustomCreate();
         String getBaseUrl();
         Observable<Dep> zipRx();
 
